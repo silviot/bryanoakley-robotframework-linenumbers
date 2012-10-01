@@ -28,7 +28,7 @@ class TsvReader:
                     populator.start_table([c.replace('*','') for c in cells]):
                 process = True
             elif process:
-                populator.add(cells)
+                populator.add(cells, linenumber=index+1)
         populator.eof()
 
     @classmethod

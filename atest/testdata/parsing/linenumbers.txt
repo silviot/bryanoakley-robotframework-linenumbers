@@ -1,0 +1,58 @@
+*** Settings ***
+| Documentation  | Suite.documentation
+| Suite Setup    | suite.suite_setup
+| Suite Teardown | suite.suite_teardown
+| Test Setup     | suite.test_setup
+| Test Teardown  | suite.test_teardown
+| Metadata       | meta1 | suite.meta1
+
+*** Variables ***
+| VAR1 | var1
+
+*** Test Cases ***
+| TC1
+| | [Documentation] | TC1.doc      | # make sure comments don't
+| | [Setup]         | TC1.setup    | # throw off the numbering
+| | [Teardown]      | TC1.teardown | # comment
+| | [Tags]          | TC1.tags     | # comment
+| | [Template]      | TC1.template | # comment
+| | [Timeout]       | TC1.timeout  | # comment
+| | TC1.Step1                      | # comment
+| | TC1.Step2                      | # comment
+
+| TC2
+| | TC2.Step1
+| | ... | arg1 | arg2
+| | TC2.Step2
+| | ... | arg1
+| | ... | arg2
+
+*** Keywords ***
+| KW1
+| | [Arguments] | KW1.arg
+| | [Teardown] | KW1.teardown
+| | [Timeout] | KW1.timeout
+| | KW1.Step1
+| | KW1.Step2
+| | [Return] | KW1.return
+
+| KW2
+| | KW2.Step1
+| | ... | arg1 | arg2
+| | KW2.Step2
+| | ... | arg1
+| | ... | arg2
+| | KW2.Step3
+
+*** Settings ***
+# Early in development I discovered that these comments threw off 
+# the way I was saving line numbers, so this comment is important
+# to the test.
+| Metadata      | meta2 | suite.meta2
+| Force Tags    | suite.force_tags
+| Default Tags  | suite.default_tags
+| Test Template | suite.test_template
+| Test Timeout  | suite.test_timeout
+
+*** Variables ***
+| VAR2 | var2
