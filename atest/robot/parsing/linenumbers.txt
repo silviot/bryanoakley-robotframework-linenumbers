@@ -9,7 +9,6 @@ Library         Collections
 *** Test Cases ***
 Line numbers for suite metadata
     [Documentation]  Test for line numbers associated with Metadata in the Settings table
-    log  ${LINE}
     metadata "meta1" should be on line 7
     metadata "meta2" should be on line 51
 
@@ -47,7 +46,6 @@ Line numbers for keywords
 
 Line numbers for keyword settings
     [Documentation]  Test for line numbers associated with keyword settings
-    log  ${LINE}
     setting "KW1 [Arguments]" should be on line 32
     setting "KW1 [Return]" should be on line 37
 
