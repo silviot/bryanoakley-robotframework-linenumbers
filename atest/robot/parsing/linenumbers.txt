@@ -1,0 +1,87 @@
+*** Settings ***
+Documentation   Tests for checking that line numbers are preserved after parsing text-formatted files
+Suite Setup     Parse and save linenumber information  parsing/linenumbers.txt
+Force Tags      pybot  jybot
+Resource        atest_resource.txt
+Library         TestCheckerLibrary
+Library         Collections
+
+*** Test Cases ***
+Line numbers for suite metadata
+    [Documentation]  Test for line numbers associated with Metadata in the Settings table
+    log  ${LINE}
+    metadata "meta1" should be on line 7
+    metadata "meta2" should be on line 51
+
+Line numbers for suite settings
+    [Documentation]  Test for line numbers associated with settings in the Settings table
+    suite setting "documentation" should be on line 2
+    suite setting "test setup" should be on line 5
+    suite setting "test teardown" should be on line 6
+    suite setting "force tags" should be on line 52
+    suite setting "default tags" should be on line 53
+    suite setting "test template" should be on line 54
+    suite setting "test timeout" should be on line 55
+
+Line numbers for test cases
+    [Documentation]  Test for line numbers associated with test cases
+    testcase "TC1" should be on line 13
+    testcase "TC2" should be on line 23
+
+Line numbers for test case settings
+    [Documentation]  Test for line numbers associated with test cases
+    setting "TC1 [Documentation]" should be on line 14
+    setting "TC1 [Setup]" should be on line 15
+    setting "TC1 [Teardown]" should be on line 16
+    setting "TC1 [Timeout]" should be on line 19
+
+Line numbers for the variable table
+    [Documentation]  Test for line numbers associated with variables in variable tables
+    variable "VAR1" should be on line 10
+    variable "VAR2" should be on line 58
+
+Line numbers for keywords
+    [Documentation]  Test for line numbers associated with keywords in the keyword tables
+    keyword "KW1" should be on line 31
+    keyword "KW2" should be on line 39
+
+Line numbers for keyword settings
+    [Documentation]  Test for line numbers associated with keyword settings
+    log  ${LINE}
+    setting "KW1 [Arguments]" should be on line 32
+    setting "KW1 [Return]" should be on line 37
+
+Line numbers for steps in a test case
+    [Documentation]  Test for line numbers associated with steps in a test case
+    step "TC1.Step1" should be on line 20
+    step "TC1.Step2" should be on line 21
+
+Line numbers for steps in a keyword
+    [Documentation]  Test for line numbers associated with steps in a keyword
+    step "KW1.Step1" should be on line 35
+    step "KW1.Step2" should be on line 36
+    step "KW2.Step1" should be on line 40
+    step "KW2.Step2" should be on line 42
+    step "KW2.Step3" should be on line 45
+
+*** Keywords ***
+validate line number
+    [Arguments]  ${type}  ${key}  ${expected}
+    ${actual}=  Get from dictionary  ${LINE}  ${type}: ${key}
+    Run keyword and continue on failure
+    ...  Should be equal ${actual}  ${expected}
+    ...  expected line number for '${key}' to be ${expected} but it was ${actual}
+    ...  No Values
+    
+${type} "${key}" should be on line ${expected}
+    ${actual}=  Get from dictionary  ${LINE}  ${type}: ${key}
+    Run keyword and continue on failure
+    ...  Should be equal as strings  ${actual}  ${expected}
+    ...  expected line number for '${key}' to be ${expected} but it was ${actual}
+    ...  No Values
+
+Parse and save linenumber information
+    [Arguments]  ${PATH}
+    ${LINE}=  Parse and return linenumber information  ${DATADIR}${/}${PATH}
+    Set suite variable  ${LINE}
+

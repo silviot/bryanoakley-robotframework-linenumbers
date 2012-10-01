@@ -152,6 +152,59 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         for act, exp in zip(actual_names, kw_names):
             assert_equals(act, exp)
 
+    def parse_and_return_line_number_information(self, path):
+        
+        import os
+        from robot.parsing.model import TestData
+        # path is relative to atest/testdata
+        suite = TestData(source=path)
+        result = {
+            "suite setting: documentation": suite.setting_table.doc.linenumber,
+            "suite setting: test setup":    suite.setting_table.test_setup.linenumber,
+            "suite setting: test teardown": suite.setting_table.test_teardown.linenumber,
+            "suite setting: force tags":    suite.setting_table.force_tags.linenumber,
+            "suite setting: default tags":  suite.setting_table.default_tags.linenumber,
+            "suite setting: test timeout":  suite.setting_table.test_timeout.linenumber,
+            "suite setting: test template": suite.setting_table.test_template.linenumber,
+            }
+
+        for testcase in suite.testcase_table:
+            test_key = "testcase: " + testcase.name
+            result[test_key] = testcase.linenumber
+#            import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
+
+            for setting in testcase.settings:
+                setting_key = "setting: %s %s" % (testcase.name, setting.setting_name)
+                result[setting_key] = setting.linenumber
+
+            for step in testcase.steps:
+                step_key = "step: " + step.as_list()[0]
+                result[step_key] = step.linenumber
+
+        for keyword in suite.keyword_table:
+            kw_key = "keyword: " + keyword.name
+            result[kw_key] = keyword.linenumber
+
+            for setting in keyword.settings:
+                import sys
+                setting_key = "setting: %s %s" % (keyword.name, setting.setting_name)
+                result[setting_key] = setting.linenumber
+
+            for step in keyword.steps:
+#                import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
+                step_key = "step: " + step.as_list()[0]
+                result[step_key] = step.linenumber
+
+        for variable in suite.variable_table:
+            var_key = "variable: " + variable.name
+            result[var_key] = variable.linenumber
+
+        for meta in suite.setting_table.metadata:
+            meta_key = "metadata: " + meta.name
+            result[meta_key] = meta.linenumber
+
+        return result
+
 
 def process_suite(suite):
     for subsuite in suite.suites:
@@ -192,3 +245,4 @@ def process_errors(errors):
     errors.msgs = errors.messages
     errors.message_count = errors.msg_count = len(errors.messages)
     return errors
+
